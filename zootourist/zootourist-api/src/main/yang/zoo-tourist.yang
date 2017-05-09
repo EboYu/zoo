@@ -1,0 +1,34 @@
+module zoo-tourist {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:zoo:tourist";
+    prefix "zoo-tourist";
+
+    revision "2017-05-08" {
+        description "Initial revision of zoo tourist";
+    }
+
+    container zoo-tourists{
+        list tourist{
+            key "touristId";
+            leaf name {
+                type string;
+            }
+            leaf touristId {
+                type string;
+            }
+        }
+    }
+
+    rpc add-tourist{
+         input{
+             leaf name{
+                type string;
+             }
+
+             leaf touristId{
+                type string;
+             }
+         }
+    }
+
+}

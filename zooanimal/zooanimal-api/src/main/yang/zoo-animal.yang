@@ -1,0 +1,52 @@
+module zoo-animal {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:zoo:animal";
+    prefix "zoo-animal";
+
+    revision "2017-05-08" {
+        description "Initial revision of zoo animal";
+    }
+
+    container zoo-animals{
+            list animal{
+                key "id";
+                leaf id {
+                    type string;
+                }
+                leaf name {
+                    type string;
+                }
+                leaf num {
+                    type uint32;
+                }
+            }
+        }
+
+
+    rpc make-animal{
+        input {
+             leaf name {
+                 type string;
+             }
+             leaf description {
+                 type string;
+             }
+
+             leaf num {
+                 type uint32 {
+                    range "1 .. 10";
+                 }
+                 default 1;
+                 }
+             }
+    }
+
+    rpc get-numOfAnimal{
+        output{
+            leaf num{
+                type uint32;
+            }
+        }
+    }
+
+}

@@ -1,0 +1,56 @@
+module zoo-manager {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:zoo:manager";
+    prefix "zoo-manager";
+
+    revision "2017-05-08" {
+        description "Initial revision of zoo manager";
+    }
+
+    container zoo-tickets{
+            leaf num {
+                type uint32;
+            }
+        }
+
+    rpc put-tickets{
+        input {
+            leaf num {
+                type uint32;
+            }
+        }
+    }
+
+    rpc buy-ticket{
+        input {
+             leaf name {
+                  type string;
+             }
+
+             leaf num {
+                  type uint32;
+             }
+          }
+          output{
+             leaf ticketNum{
+                  type uint32;
+             }
+          }
+    }
+
+    rpc manageZoo{
+        input{
+            leaf animalNum{
+                type uint32;
+            }
+            leaf foodNum{
+                type uint32;
+            }
+        }
+    }
+    notification add-tourists{
+           leaf amountOfTourists {
+                type uint32;
+           }
+    }
+}

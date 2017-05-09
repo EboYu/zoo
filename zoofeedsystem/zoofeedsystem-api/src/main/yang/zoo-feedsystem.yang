@@ -1,0 +1,43 @@
+module zoo-feedsystem {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:zoo:feedsystem";
+    prefix "zoo-feedsystem";
+
+    revision "2017-05-08" {
+        description "Initial revision of zoo feedsystem";
+    }
+
+    container zoo-foods{
+            list food{
+                key "id";
+                leaf id {
+                    type string;
+                }
+                leaf name {
+                    type string;
+                }
+                leaf num {
+                    type uint32;
+                }
+            }
+        }
+
+
+
+    rpc add-food{
+        input {
+            leaf name{
+                type string;
+            }
+            leaf num{
+                type uint32;
+            }
+         }
+    }
+
+    notification food-stats{
+        leaf amountOfFood{
+            type uint32;
+        }
+    }
+}
