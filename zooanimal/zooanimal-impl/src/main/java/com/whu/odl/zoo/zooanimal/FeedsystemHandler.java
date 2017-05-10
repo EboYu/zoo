@@ -47,7 +47,7 @@ public class FeedsystemHandler implements ZooFeedsystemListener {
     public void onFoodStats(FoodStats notification) {
         if(notification.getAmountOfFood()>4){
             try{
-                Thread.sleep(4*1000);
+                Thread.sleep(4*3000);
             }catch (Exception e){
                 LOG.error("failed to sleep");
             }

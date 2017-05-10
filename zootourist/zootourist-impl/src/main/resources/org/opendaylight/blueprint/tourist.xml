@@ -23,5 +23,22 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <odl:rpc-service id="managerService"
                      interface="org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.ZooManagerService"/>
 
+    <bean id="provider"
+          class="com.whu.odl.zoo.zootourist.ZooTouristProvider"
+          init-method="init" destroy-method="close" >
+        <argument ref="dataBroker"/>
+        <argument ref="rpc"/>
+        <argument ref="managerService" />
+        <argument ref="animalService"/>
+    </bean>
+
+    <bean id="zooTouristImpl"
+          class="com.whu.odl.zoo.zootourist.ZooTouristImpl">
+        <argument ref="dataBroker"/>
+        <argument ref="managerService" />
+        <argument ref="animalService"/>
+    </bean>
+
     <odl:rpc-implementation ref="zooTouristImpl"/>
+
 </blueprint>

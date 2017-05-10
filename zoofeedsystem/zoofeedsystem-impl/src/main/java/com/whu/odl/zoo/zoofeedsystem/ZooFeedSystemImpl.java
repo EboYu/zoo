@@ -14,12 +14,12 @@ import org.opendaylight.controller.md.sal.binding.api.*;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
-import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.*;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.zoo.foods.Food;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.zoo.foods.FoodBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.zoo.foods.FoodKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.ZooTickets;
+import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
@@ -43,30 +43,17 @@ public class ZooFeedSystemImpl implements ZooFeedsystemService, DataTreeChangeLi
     private static final Logger LOG = LoggerFactory.getLogger(ZooFeedSystemImpl.class);
 
     private final DataBroker dataBroker;
-    private final RpcProviderRegistry rpcRegistry;
     private final NotificationPublishService notificationPublishService;
-    private static final Future<RpcResult<Void>> RPC_SUCCESS = RpcResultBuilder.<Void>success().buildFuture();
+    private InstanceIdentifier<ZooTickets> identifier = InstanceIdentifier.create(ZooTickets.class);
 
-    @Inject
-    public ZooFeedSystemImpl(DataBroker dataBroker, RpcProviderRegistry rpcRegistry, NotificationService notificationService, NotificationPublishService notificationPublishService) {
+
+    public ZooFeedSystemImpl(DataBroker dataBroker, NotificationPublishService notificationPublishService){
         this.dataBroker = dataBroker;
-        this.rpcRegistry = rpcRegistry;
         this.notificationPublishService = notificationPublishService;
     }
-    /**
-     * Method called when the blueprint container is created.
-     */
-    @PostConstruct
-    public void init() {
-        LOG.info("ZooFeedSystemImpl Session Initiated");
-    }
 
-    /**
-     * Method called when the blueprint container is destroyed.
-     */
-    @PreDestroy
-    public void close() {
-        LOG.info("ZooFeedSystemImpl Closed");
+    public ListenerRegistration<ZooFeedSystemImpl> register(DataBroker dataBroker){
+        return dataBroker.registerDataTreeChangeListener(new DataTreeIdentifier<ZooTickets>(LogicalDatastoreType.CONFIGURATION,identifier),this);
     }
 
     @Override
@@ -117,6 +104,7 @@ public class ZooFeedSystemImpl implements ZooFeedsystemService, DataTreeChangeLi
             ZooTickets dataBefore = change.getRootNode().getDataBefore();
             if(dataAfter.getNum()<dataBefore.getNum() && dataBefore.getNum()-dataAfter.getNum()>5){
                 AddFoodInput addFoodInput = new AddFoodInputBuilder().setName("fish").setNum(dataBefore.getNum()-dataAfter.getNum()).build();
+                LOG.info("Add food for data change on tickets");
                 addFood(addFoodInput);
             }
         }

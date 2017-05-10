@@ -31,10 +31,10 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
   <modules>
     <module>features</module>
     <module>artifacts</module>
+    <module>zoomanager</module>
     <module>zooanimal</module>
     <module>commons</module>
     <module>distribution/karaf</module>
-    <module>zoomanager</module>
     <module>zoofeedsystem</module>
     <module>zootourist</module>
   </modules>

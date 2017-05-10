@@ -18,7 +18,22 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
                interface="org.opendaylight.controller.sal.binding.api.RpcProviderRegistry"/>
     <reference id="notificationPublishService"
                interface="org.opendaylight.controller.md.sal.binding.api.NotificationPublishService"/>
+
+    <bean id="provider"
+          class="com.whu.odl.zoo.zoofeedsystem.ZooFeedSystemProvider"
+          init-method="init" destroy-method="close" >
+        <argument ref="dataBroker"/>
+        <argument ref="rpc"/>
+        <argument ref="notificationPublishService"/>
+    </bean>
+
+    <bean id="zooFeedSystemImpl"
+          class="com.whu.odl.zoo.zoofeedsystem.ZooFeedSystemImpl">
+        <argument ref="dataBroker"/>
+        <argument ref="notificationPublishService"/>
+    </bean>
+
     <odl:rpc-implementation ref="zooFeedSystemImpl"/>
     <service ref="zooFeedSystemImpl"
-             interface="org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.ZooFeedsystemService"/>
+             interface="org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.ZooFeedsystemService" odl:type="default"/>
 </blueprint>

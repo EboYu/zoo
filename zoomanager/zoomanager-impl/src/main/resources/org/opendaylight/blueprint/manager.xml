@@ -19,15 +19,34 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <reference id="notificationPublishService"
                interface="org.opendaylight.controller.md.sal.binding.api.NotificationPublishService"/>
 
+    <bean id="provider"
+          class="com.whu.odl.zoo.zoomanager.ZooManagerProvider"
+          init-method="init" destroy-method="close" >
+        <argument ref="dataBroker"/>
+        <argument ref="rpc"/>
+        <argument ref="notificationPublishService"/>
+        <argument ref="zooFeedsystemService" />
+        <argument ref="zooAnimalService"/>
+    </bean>
+
     <odl:rpc-service id="zooAnimalService"
                      interface="org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.ZooAnimalService"/>
 
     <odl:rpc-service id="zooFeedsystemService"
                      interface="org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.ZooFeedsystemService"/>
 
+
+    <bean id="zooManagerImpl"
+          class="com.whu.odl.zoo.zoomanager.ZooManagerImpl">
+        <argument ref="dataBroker"/>
+        <argument ref="notificationPublishService"/>
+        <argument ref="zooFeedsystemService" />
+        <argument ref="zooAnimalService"/>
+    </bean>
+
     <odl:rpc-implementation ref="zooManagerImpl"/>
 
     <service ref="zooManagerImpl"
-             interface="org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.ZooManagerService"/>
+             interface="org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.ZooManagerService" odl:type="default"/>
 
 </blueprint>

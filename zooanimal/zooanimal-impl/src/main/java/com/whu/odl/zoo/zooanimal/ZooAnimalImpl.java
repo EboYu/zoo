@@ -14,6 +14,7 @@ import org.opendaylight.controller.md.sal.binding.api.*;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.*;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.zoo.animals.Animal;
@@ -47,38 +48,10 @@ public class ZooAnimalImpl implements ZooAnimalService{
     private static final Logger LOG = LoggerFactory.getLogger(ZooAnimalImpl.class);
 
     private final DataBroker dataBroker;
-    private final RpcProviderRegistry rpcRegistry;
-    private final NotificationService notificationService;
-    private final ManagerHandler managerHandler;
-    private final FeedsystemHandler feedsystemHandler;
-
-    private static final Future<RpcResult<Void>> RPC_SUCCESS = RpcResultBuilder.<Void>success().buildFuture();
 
     @Inject
-    public ZooAnimalImpl(final DataBroker dataBroker, final RpcProviderRegistry rpcRegistry, NotificationService notificationService) {
-        this.dataBroker = dataBroker;
-        this.rpcRegistry = rpcRegistry;
-        this.notificationService = notificationService;
-        managerHandler = new ManagerHandler(dataBroker);
-        feedsystemHandler = new FeedsystemHandler(dataBroker);
-        notificationService.registerNotificationListener(managerHandler);
-        notificationService.registerNotificationListener(feedsystemHandler);
-    }
-
-    /**
-     * Method called when the blueprint container is created.
-     */
-    @PostConstruct
-    public void init() {
-        LOG.info("ZooAnimalImpl Session Initiated");
-    }
-
-    /**
-     * Method called when the blueprint container is destroyed.
-     */
-    @PreDestroy
-    public void close() {
-        LOG.info("ZooAnimalImpl Closed");
+    public ZooAnimalImpl(DataBroker dataBroker) {
+       this.dataBroker =dataBroker;
     }
 
     @Override

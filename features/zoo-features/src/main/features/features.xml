@@ -19,9 +19,8 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <feature name='odl-zoo-api' version='${project.version}' description='OpenDaylight :: zoo :: api'>
         <feature version='${mdsal.version}'>odl-mdsal-broker</feature>
         <feature version='${mdsal.model.version}'>odl-mdsal-models</feature>
-        <feature version='${infrautils.version}'>odl-infrautils-counters</feature>
-        <bundle>mvn:com.whu.odl.zoo/zooanimal-api/{{VERSION}}</bundle>
         <bundle>mvn:com.whu.odl.zoo/zoomanager-api/{{VERSION}}</bundle>
+        <bundle>mvn:com.whu.odl.zoo/zooanimal-api/{{VERSION}}</bundle>
         <bundle>mvn:com.whu.odl.zoo/zoofeedsystem-api/{{VERSION}}</bundle>
         <bundle>mvn:com.whu.odl.zoo/zootourist-api/{{VERSION}}</bundle>
     </feature>
@@ -29,8 +28,8 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         <feature version='${mdsal.version}'>odl-mdsal-broker</feature>
         <feature version='${infrautils.version}'>odl-infrautils-inject</feature>
         <feature version='${project.version}'>odl-zoo-api</feature>
-        <bundle>mvn:com.whu.odl.zoo/zooanimal-impl/{{VERSION}}</bundle>
         <bundle>mvn:com.whu.odl.zoo/zoomanager-impl/{{VERSION}}</bundle>
+        <bundle>mvn:com.whu.odl.zoo/zooanimal-impl/{{VERSION}}</bundle>
         <bundle>mvn:com.whu.odl.zoo/zoofeedsystem-impl/{{VERSION}}</bundle>
         <bundle>mvn:com.whu.odl.zoo/zootourist-impl/{{VERSION}}</bundle>
     </feature>

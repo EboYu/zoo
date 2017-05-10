@@ -14,6 +14,7 @@ import org.opendaylight.controller.md.sal.binding.api.*;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.GetNumOfAnimalOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.ZooAnimalService;
@@ -53,34 +54,15 @@ public class ZooTouristImpl implements ZooTouristService{
     private static final Logger LOG = LoggerFactory.getLogger(ZooTouristImpl.class);
 
     private final DataBroker dataBroker;
-    private final RpcProviderRegistry rpcProviderRegistry;
     private final ZooAnimalService animalService;
     private final ZooManagerService managerService;
-
     private static final Future<RpcResult<Void>> RPC_SUCCESS = RpcResultBuilder.<Void>success().buildFuture();
 
     @Inject
-    public ZooTouristImpl(final DataBroker dataBroker, RpcProviderRegistry rpcProviderRegistry, ZooManagerService managerService, ZooAnimalService animalService) {
+    public ZooTouristImpl(DataBroker dataBroker, ZooManagerService managerService, ZooAnimalService animalService) {
         this.dataBroker = dataBroker;
-        this.rpcProviderRegistry = rpcProviderRegistry;
         this.animalService = animalService;
         this.managerService = managerService;
-    }
-
-    /**
-     * Method called when the blueprint container is created.
-     */
-    @PostConstruct
-    public void init() {
-        LOG.info("ZooTouristImpl Session Initiated");
-    }
-
-    /**
-     * Method called when the blueprint container is destroyed.
-     */
-    @PreDestroy
-    public void close() {
-        LOG.info("ZooTouristImpl Closed");
     }
 
     @Override

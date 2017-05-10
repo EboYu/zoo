@@ -15,6 +15,7 @@ import org.opendaylight.controller.md.sal.binding.api.*;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.MakeAnimalInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.ZooAnimalService;
@@ -45,42 +46,29 @@ import java.util.concurrent.Future;
  * Description: manager implementation
  */
 @Singleton
-public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener<ZooFoods> {
+    public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener<ZooFoods> {
     private static final Logger LOG = LoggerFactory.getLogger(ZooManagerImpl.class);
 
     private final DataBroker dataBroker;
-    private final RpcProviderRegistry rpcRegistry;
     private final NotificationPublishService notificationPublishService;
     private final ZooFeedsystemService zooFeedsystemService;
     private final ZooAnimalService zooAnimalService;
     private static final Future<RpcResult<Void>> RPC_SUCCESS = RpcResultBuilder.<Void>success().buildFuture();
+    private InstanceIdentifier<ZooFoods> identifier = InstanceIdentifier.create(ZooFoods.class);
 
-    @Inject
-    public ZooManagerImpl(final DataBroker dataBroker, final RpcProviderRegistry rpcRegistry,
+    public ZooManagerImpl(DataBroker dataBroker,
                           NotificationPublishService notificationPublishService,
                           ZooFeedsystemService zooFeedsystemService, ZooAnimalService zooAnimalService) {
         this.dataBroker = dataBroker;
-        this.rpcRegistry = rpcRegistry;
         this.notificationPublishService = notificationPublishService;
         this.zooFeedsystemService = zooFeedsystemService;
         this.zooAnimalService = zooAnimalService;
     }
 
-    /**
-     * Method called when the blueprint container is created.
-     */
-    @PostConstruct
-    public void init() {
-        LOG.info("ZooManagerImpl Session Initiated");
+    public ListenerRegistration<ZooManagerImpl> register(DataBroker dataBroker){
+        return dataBroker.registerDataTreeChangeListener(new DataTreeIdentifier<ZooFoods>(LogicalDatastoreType.CONFIGURATION,identifier),this);
     }
 
-    /**
-     * Method called when the blueprint container is destroyed.
-     */
-    @PreDestroy
-    public void close() {
-        LOG.info("ZooManagerImpl Closed");
-    }
 
     @Override
     public Future<RpcResult<BuyTicketOutput>> buyTicket(BuyTicketInput input) {
@@ -175,13 +163,17 @@ public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener
         rpcResultBuilder = RpcResultBuilder.failed();
         if(input.getAnimalNum()>0)
         {
-            if(executeMakeAnimal("cat",input.getAnimalNum(),"make "+input.getAnimalNum()+" cats"))
+            if(executeMakeAnimal("cat",input.getAnimalNum(),"make "+input.getAnimalNum()+" cats")){
+                LOG.info("make Animal");
                 rpcResultBuilder = RpcResultBuilder.success();
+            }
         }
         if(input.getFoodNum()>0)
         {
-            if(executeAddFood("fish",input.getFoodNum()))
+            if(executeAddFood("apple",input.getFoodNum())){
+                LOG.info("add food");
                 rpcResultBuilder = RpcResultBuilder.success();
+            }
         }
 
         return Futures.immediateFuture(rpcResultBuilder.build());
@@ -213,6 +205,7 @@ public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener
         final Future<RpcResult<Void>> rpcResultFuture = zooFeedsystemService.addFood(builder.build());
         try {
             if (rpcResultFuture.get().isSuccessful()) {
+                LOG.info("success to add food");
                 return true;
             }
         } catch (InterruptedException | ExecutionException e) {

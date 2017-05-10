@@ -16,6 +16,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.opendaylight.controller</groupId>
+            <artifactId>sal-binding-broker-impl</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>zoomanager-api</artifactId>
             <version>${project.version}</version>
@@ -54,7 +58,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -91,8 +94,6 @@
                     <instructions>
                         <!-- This bundle works with Karaf 3 and 4.0 -->
                         <Import-Package>
-                            org.apache.karaf.shell.commands;version="[3.0.0,4.1)",
-                            org.apache.karaf.shell.console;version="[3.0.0,4.1)",
                             *
                         </Import-Package>
                     </instructions>

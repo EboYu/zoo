@@ -15,18 +15,39 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
                interface="org.opendaylight.controller.md.sal.binding.api.DataBroker"
                odl:type="default" />
     <reference id="rpc"
-               interface="org.opendaylight.controller.sal.binding.api.RpcProviderRegistry"
-               odl:type="default"/>
+               interface="org.opendaylight.controller.sal.binding.api.RpcProviderRegistry"/>
     <reference id="notificationService"
-               interface="org.opendaylight.controller.md.sal.binding.api.NotificationService"
-               odl:type="default"/>
+               interface="org.opendaylight.controller.md.sal.binding.api.NotificationService"/>
 
-    <odl:rpc-implementation ref="zooAnimalImpl" />
+    <bean id="feedsystemHandler" class="com.whu.odl.zoo.zooanimal.FeedsystemHandler">
+        <argument ref="dataBroker"/>
+    </bean>
 
-    <odl:notification-listener ref="feedsystemHandler" />
+    <odl:notification-listener ref="feedsystemHandler"/>
+
+    <bean id="managerHandler" class="com.whu.odl.zoo.zooanimal.ManagerHandler">
+        <argument ref="dataBroker"/>
+    </bean>
+
+    <odl:notification-listener ref="feedsystemHandler"/>
     <odl:notification-listener ref="managerHandler" />
 
+    <bean id="provider"
+          class="com.whu.odl.zoo.zooanimal.ZooAnimalProvider"
+          init-method="init" destroy-method="close" >
+        <argument ref="dataBroker"/>
+        <argument ref="rpc"/>
+        <argument ref="notificationService"/>
+    </bean>
+
+
+    <bean id="zooAnimalImpl" class="com.whu.odl.zoo.zooanimal.ZooAnimalImpl">
+        <argument ref="dataBroker"/>
+    </bean>
+
+    <odl:rpc-implementation ref="zooAnimalImpl"/>
+
     <service ref="zooAnimalImpl"
-             interface="org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.ZooAnimalService"/>
+             interface="org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.ZooAnimalService" odl:type="default"/>
 
 </blueprint>
