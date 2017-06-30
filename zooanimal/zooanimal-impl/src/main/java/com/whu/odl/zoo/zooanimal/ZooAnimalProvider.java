@@ -38,7 +38,6 @@ public class ZooAnimalProvider {
 
     private static final Future<RpcResult<Void>> RPC_SUCCESS = RpcResultBuilder.<Void>success().buildFuture();
 
-    @Inject
     public ZooAnimalProvider(final DataBroker dataBroker, final RpcProviderRegistry rpcRegistry, NotificationService notificationService) {
         this.dataBroker = dataBroker;
         this.rpcRegistry = rpcRegistry;
@@ -48,12 +47,7 @@ public class ZooAnimalProvider {
     /**
      * Method called when the blueprint container is created.
      */
-    @PostConstruct
     public void init() {
-        ManagerHandler managerHandler = new ManagerHandler(dataBroker);
-        FeedsystemHandler feedsystemHandler = new FeedsystemHandler(dataBroker);
-        managerListenerRegisteration = notificationService.registerNotificationListener(managerHandler);
-        feedListenerRegisteration=notificationService.registerNotificationListener(feedsystemHandler);
         rpcRegistration = rpcRegistry.addRpcImplementation(ZooAnimalService.class,new ZooAnimalImpl(dataBroker));
         LOG.info("ZooAnimalProvider Session Initiated");
     }
@@ -61,10 +55,9 @@ public class ZooAnimalProvider {
     /**
      * Method called when the blueprint container is destroyed.
      */
-    @PreDestroy
     public void close() throws Exception{
         if(rpcRegistration !=null)
-        rpcRegistration.close();
+            rpcRegistration.close();
         if(managerListenerRegisteration!=null)
             managerListenerRegisteration.close();
         if(feedListenerRegisteration!=null)

@@ -1,4 +1,4 @@
-module zoo-tourist {
+ module zoo-tourist {
     yang-version 1;
     namespace "urn:opendaylight:params:xml:ns:yang:zoo:tourist";
     prefix "zoo-tourist";

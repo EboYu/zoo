@@ -17,8 +17,10 @@ import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.GetNumOfAnimalOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.MakeAnimalInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.ZooAnimalService;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.ZooAnimals;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.AddFoodInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.ZooFeedsystemService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.ZooFoods;
@@ -38,6 +40,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -45,8 +48,7 @@ import java.util.concurrent.Future;
  * Created by ebo on 17-5-8
  * Description: manager implementation
  */
-@Singleton
-    public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener<ZooFoods> {
+public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener<ZooFoods> {
     private static final Logger LOG = LoggerFactory.getLogger(ZooManagerImpl.class);
 
     private final DataBroker dataBroker;
@@ -81,7 +83,7 @@ import java.util.concurrent.Future;
             Optional<ZooTickets> optional = checkedFuture.checkedGet();
             if (optional.isPresent() && optional.get().getNum()!=0){
                 ZooTickets zooTickets = optional.get();
-                if(zooTickets.getNum()>= input.getNum()){
+                if(zooTickets.getNum()>= input.getNum()+5){
                     ZooTickets zooTickets1 = new ZooTicketsBuilder().setNum(zooTickets.getNum()-input.getNum()).build();
                     rwTx.put(LogicalDatastoreType.CONFIGURATION, ticketId, zooTickets1);
                     try {
@@ -97,8 +99,6 @@ import java.util.concurrent.Future;
                     }catch (TransactionCommitFailedException e){
                         LOG.error("Failed to buy ticket",e);
                         rpcResultBuilder = RpcResultBuilder.failed();
-                        output = new BuyTicketOutputBuilder().setTicketNum(zooTickets.getNum());
-                        rpcResultBuilder.withResult(output.build());
                     }
                 } else {
                     LOG.error("There are not enough tickets");
@@ -161,19 +161,57 @@ import java.util.concurrent.Future;
     public Future<RpcResult<Void>> manageZoo(ManageZooInput input) {
         RpcResultBuilder<Void> rpcResultBuilder = null;
         rpcResultBuilder = RpcResultBuilder.failed();
-        if(input.getAnimalNum()>0)
-        {
-            if(executeMakeAnimal("cat",input.getAnimalNum(),"make "+input.getAnimalNum()+" cats")){
-                LOG.info("make Animal");
-                rpcResultBuilder = RpcResultBuilder.success();
+
+        final Future<RpcResult<GetNumOfAnimalOutput>> rpcResultFuture = zooAnimalService.getNumOfAnimal();
+        try {
+            if (rpcResultFuture.get().isSuccessful()) {
+                LOG.info("success to get number of animals");
+                GetNumOfAnimalOutput output = rpcResultFuture.get().getResult();
+                if(output!=null){
+                    if(output.getNum()+input.getAnimalNum()<=200){
+                        if(executeMakeAnimal("cat",input.getAnimalNum(),"make "+input.getAnimalNum()+" cats")){
+                            LOG.info("make Animal");
+                        }
+                    }
+                }else {
+                    if(input.getAnimalNum()<=200){
+                        if(executeMakeAnimal("cat",input.getAnimalNum(),"make "+input.getAnimalNum()+" cats")){
+                            LOG.info("make Animal");
+                        }
+                    }
+                }
             }
+        } catch (InterruptedException | ExecutionException e) {
+            LOG.error("Failed to fetch animal num");
         }
-        if(input.getFoodNum()>0)
-        {
-            if(executeAddFood("apple",input.getFoodNum())){
-                LOG.info("add food");
-                rpcResultBuilder = RpcResultBuilder.success();
+
+        ReadOnlyTransaction rdTx = dataBroker.newReadOnlyTransaction();
+        InstanceIdentifier<ZooFoods> foodId = InstanceIdentifier.builder(ZooFoods.class).build();
+        CheckedFuture<Optional<ZooFoods>, ReadFailedException> checkedFuture = rdTx.read(LogicalDatastoreType.CONFIGURATION, foodId);
+        try {
+            Optional<ZooFoods> op = checkedFuture.checkedGet();
+            if (op.isPresent()){
+                List<Food> foods = op.get().getFood();
+                Long foodNum = 0L;
+                for(Food f:foods)
+                    foodNum += f.getNum();
+                if(input.getFoodNum()+foodNum<=400)
+                {
+                    if(executeAddFood("apple",input.getFoodNum())){
+                        LOG.info("add food");
+                    }
+                }
+            }else{
+                if(input.getFoodNum()<=400)
+                {
+                    if(executeAddFood("apple",input.getFoodNum())){
+                        LOG.info("add food");
+                    }
+                }
             }
+            rpcResultBuilder = RpcResultBuilder.success();
+        }catch (ReadFailedException e){
+            LOG.error("Failed to get number of food",e);
         }
 
         return Futures.immediateFuture(rpcResultBuilder.build());
@@ -182,6 +220,7 @@ import java.util.concurrent.Future;
     private void checkAndPublishAddTouristsNotification(Long touristNum) throws InterruptedException{
         AddTourists addTourists = new AddTouristsBuilder().setAmountOfTourists(touristNum).build();
         notificationPublishService.putNotification(addTourists);
+        LOG.info("Publish notification of add tourist "+touristNum);
     }
 
     private boolean executeMakeAnimal(String name, Long num, String desc){
@@ -189,10 +228,10 @@ import java.util.concurrent.Future;
         builder.setName(name).setNum(num).setDescription(desc);
         final Future<RpcResult<Void>> rpcResultFuture = zooAnimalService.makeAnimal(builder.build());
         try {
-            if (!rpcResultFuture.get().isSuccessful()) {
+            if (rpcResultFuture.get().isSuccessful()) {
+                LOG.info("success to add animal");
                 return true;
             }
-
         } catch (InterruptedException | ExecutionException e) {
             LOG.error("Failed to make animal");
         }
@@ -219,7 +258,9 @@ import java.util.concurrent.Future;
         for(DataTreeModification<ZooFoods> change :changes){
             ZooFoods dataAfter =change.getRootNode().getDataAfter();
             ZooFoods dataBefore = change.getRootNode().getDataBefore();
-            if(dataAfter.getFood().equals(dataBefore.getFood())){
+            if(dataAfter == null || dataBefore==null)
+                return;
+            if(dataAfter.getFood().size() < dataBefore.getFood().size() || dataAfter.getFood().size()==1){
                 Long foodNum = 0L;
                 for(Food food:dataAfter.getFood()){
                     foodNum+=food.getNum();

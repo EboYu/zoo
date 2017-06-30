@@ -43,13 +43,11 @@ import java.util.concurrent.Future;
  * Created by ebo on 17-5-8
  * Description: animal implementation
  */
-@Singleton
 public class ZooAnimalImpl implements ZooAnimalService{
     private static final Logger LOG = LoggerFactory.getLogger(ZooAnimalImpl.class);
 
     private final DataBroker dataBroker;
 
-    @Inject
     public ZooAnimalImpl(DataBroker dataBroker) {
        this.dataBroker =dataBroker;
     }
@@ -65,16 +63,21 @@ public class ZooAnimalImpl implements ZooAnimalService{
             Optional<Animal> optional = checkedFuture.checkedGet();
             Animal animal = null;
             if (optional.isPresent()) {
-                animal = new AnimalBuilder().setId(input.getName()).setName(input.getName()).setNum(input.getNum()+optional.get().getNum()).build();
+                if(input.getNum()+optional.get().getNum()<=200){
+                    animal = new AnimalBuilder().setId(input.getName()).setName(input.getName()).setNum(input.getNum()+optional.get().getNum()).build();
+                }
             }else {
+                if(input.getNum()<=200)
                 animal = new AnimalBuilder().setId(input.getName()).setName(input.getName()).setNum(input.getNum()).build();
             }
-            rwTx.put(LogicalDatastoreType.CONFIGURATION, id,animal);
-            try {
-                rwTx.submit().checkedGet();
-                rpcResultBuilder = RpcResultBuilder.success();
-            }catch (TransactionCommitFailedException e){
-                LOG.error("Failed to merge animal");
+            if(animal!=null){
+                rwTx.put(LogicalDatastoreType.CONFIGURATION, id,animal);
+                try {
+                    rwTx.submit().checkedGet();
+                    rpcResultBuilder = RpcResultBuilder.success();
+                }catch (TransactionCommitFailedException e){
+                    LOG.error("Failed to merge animal");
+                }
             }
         }catch (ReadFailedException e){
             LOG.error("Failed to fetch animal");
@@ -99,6 +102,10 @@ public class ZooAnimalImpl implements ZooAnimalService{
                     animalNum += animal.getNum();
                 }
                 GetNumOfAnimalOutputBuilder builder = new GetNumOfAnimalOutputBuilder().setNum(animalNum);
+                rpcResultBuilder = RpcResultBuilder.success();
+                rpcResultBuilder.withResult(builder.build());
+            }else {
+                GetNumOfAnimalOutputBuilder builder = new GetNumOfAnimalOutputBuilder().setNum(0L);
                 rpcResultBuilder = RpcResultBuilder.success();
                 rpcResultBuilder.withResult(builder.build());
             }

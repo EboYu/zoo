@@ -10,6 +10,7 @@ package com.whu.odl.zoo.zootourist;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
+import com.whu.odl.zoo.zoomanager.ZooManagerImpl;
 import org.opendaylight.controller.md.sal.binding.api.*;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
@@ -19,6 +20,7 @@ import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.GetNumOfAnimalOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.ZooAnimalService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.ZooFoods;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.zoo.foods.Food;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.BuyTicketInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.BuyTicketOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.ZooManagerService;
@@ -29,6 +31,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.tour
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.tourist.rev170508.zoo.tourists.Tourist;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.tourist.rev170508.zoo.tourists.TouristBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.tourist.rev170508.zoo.tourists.TouristKey;
+import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
@@ -49,24 +52,30 @@ import java.util.concurrent.Future;
  * Created by ebo on 17-5-8
  * Description: tourist implementation
  */
-@Singleton
-public class ZooTouristImpl implements ZooTouristService{
+public class ZooTouristImpl implements ZooTouristService,DataTreeChangeListener<ZooFoods>{
     private static final Logger LOG = LoggerFactory.getLogger(ZooTouristImpl.class);
 
     private final DataBroker dataBroker;
     private final ZooAnimalService animalService;
     private final ZooManagerService managerService;
     private static final Future<RpcResult<Void>> RPC_SUCCESS = RpcResultBuilder.<Void>success().buildFuture();
+    private static boolean addTouristAllowable = false;
+    private InstanceIdentifier<ZooFoods> identifier = InstanceIdentifier.create(ZooFoods.class);
 
-    @Inject
     public ZooTouristImpl(DataBroker dataBroker, ZooManagerService managerService, ZooAnimalService animalService) {
         this.dataBroker = dataBroker;
         this.animalService = animalService;
         this.managerService = managerService;
     }
 
+
+    public ListenerRegistration<ZooTouristImpl> register(DataBroker dataBroker){
+        return dataBroker.registerDataTreeChangeListener(new DataTreeIdentifier<ZooFoods>(LogicalDatastoreType.CONFIGURATION,identifier),this);
+    }
+
     @Override
     public Future<RpcResult<Void>> addTourist(AddTouristInput input) {
+
         RpcResultBuilder<Void> rpcResultBuilder = null;
         WriteTransaction writeTx = dataBroker.newWriteOnlyTransaction();
         InstanceIdentifier<Tourist> id = InstanceIdentifier.builder(ZooTourists.class).child(Tourist.class, new TouristKey(input.getTouristId())).build();
@@ -76,6 +85,7 @@ public class ZooTouristImpl implements ZooTouristService{
         writeTx.merge(LogicalDatastoreType.CONFIGURATION, id, touristBuilder.build());
         try {
             writeTx.submit().checkedGet();
+            LOG.info("Add tourist",touristBuilder.build());
             rpcResultBuilder = RpcResultBuilder.success();
         }catch (TransactionCommitFailedException e){
             LOG.error("Add tourist Failed with id : "+input.getTouristId(), e);
@@ -99,7 +109,6 @@ public class ZooTouristImpl implements ZooTouristService{
                 if(touristnum>10 && animalNum>4){
                     executeBugTicket("a Team",(long)touristnum);
                 }
-
             }
         }catch (ReadFailedException e){
             LOG.error("Failed to fetch tourist");
@@ -121,7 +130,6 @@ public class ZooTouristImpl implements ZooTouristService{
                     LOG.error("Failed to delete tourists");
                 }
             }
-
         } catch (InterruptedException | ExecutionException e) {
             LOG.error("Failed to bug tickets");
         }
@@ -136,9 +144,31 @@ public class ZooTouristImpl implements ZooTouristService{
             if(result!=null){
                 return result.getNum();
             }
-
         } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
         return 0L;
+    }
+
+    @Override
+    public void onDataTreeChanged(@Nonnull Collection<DataTreeModification<ZooFoods>> changes) {
+        for(DataTreeModification<ZooFoods> change :changes){
+            ZooFoods dataAfter =change.getRootNode().getDataAfter();
+            ZooFoods dataBefore = change.getRootNode().getDataBefore();
+            if(dataAfter == null || dataBefore==null)
+                return;
+
+            Long foodNum = 0L;
+            for(Food food:dataAfter.getFood()){
+                    foodNum+=food.getNum();
+            }
+            if(foodNum<8){
+                LOG.info("Set the flag of adding tourist to false due to the number of food is smaller than 8");
+                addTouristAllowable = false;
+            }else {
+                LOG.info("Set the flag of adding tourist to true due to the number of food is bigger than 8");
+                addTouristAllowable = true;
+            }
+        }
     }
 }

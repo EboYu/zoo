@@ -10,6 +10,8 @@ package com.whu.odl.zoo.zooanimal;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.AddTourists;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.ZooManagerListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,19 +20,20 @@ import javax.inject.Singleton;
  * Created by ebo on 17-5-8
  * Description: 
  */
-@Singleton
 public class ManagerHandler implements ZooManagerListener {
-
+    private static final Logger LOG = LoggerFactory.getLogger(ZooManagerListener.class);
     private final DataBroker dataBroker;
+    public static Long rate = 3000L;
 
-    @Inject
     public ManagerHandler(DataBroker dataBroker) {
         this.dataBroker = dataBroker;
     }
     @Override
     public void onAddTourists(AddTourists notification) {
+        LOG.info("Get the notification of addTourist "+ notification.getAmountOfTourists());
         if(notification.getAmountOfTourists()>10){
-            
+            rate+=10L;
+            LOG.info("Increase rate of food eating");
         }
     }
 }

@@ -29,7 +29,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         <argument ref="dataBroker"/>
     </bean>
 
-    <odl:notification-listener ref="feedsystemHandler"/>
     <odl:notification-listener ref="managerHandler" />
 
     <bean id="provider"

@@ -37,7 +37,6 @@ public class ZooFeedSystemProvider {
     private BindingAwareBroker.RpcRegistration<ZooFeedsystemService> rpcRegistration;
     private ListenerRegistration<ZooFeedSystemImpl> listenerRegistration = null;
 
-    @Inject
     public ZooFeedSystemProvider(DataBroker dataBroker, RpcProviderRegistry rpcRegistry, NotificationPublishService notificationPublishService) {
         this.dataBroker = dataBroker;
         this.rpcRegistry = rpcRegistry;
@@ -46,7 +45,6 @@ public class ZooFeedSystemProvider {
     /**
      * Method called when the blueprint container is created.
      */
-    @PostConstruct
     public void init() {
         ZooFeedSystemImpl zooFeedSystem = new ZooFeedSystemImpl(dataBroker,notificationPublishService);
         rpcRegistration = rpcRegistry.addRpcImplementation(ZooFeedsystemService.class,zooFeedSystem);
@@ -57,7 +55,6 @@ public class ZooFeedSystemProvider {
     /**
      * Method called when the blueprint container is destroyed.
      */
-    @PreDestroy
     public void close() {
         listenerRegistration.close();
         if(rpcRegistration!=null)

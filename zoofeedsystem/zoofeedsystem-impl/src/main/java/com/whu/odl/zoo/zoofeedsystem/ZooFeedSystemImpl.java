@@ -14,6 +14,7 @@ import org.opendaylight.controller.md.sal.binding.api.*;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
+import org.opendaylight.mdsal.dom.api.DOMNotificationListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.*;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.zoo.foods.Food;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.zoo.foods.FoodBuilder;
@@ -32,13 +33,13 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Future;
 
 /*
  * Created by ebo on 17-5-8
  * Description: feed system implementation
  */
-@Singleton
 public class ZooFeedSystemImpl implements ZooFeedsystemService, DataTreeChangeListener<ZooTickets> {
     private static final Logger LOG = LoggerFactory.getLogger(ZooFeedSystemImpl.class);
 
@@ -63,7 +64,6 @@ public class ZooFeedSystemImpl implements ZooFeedsystemService, DataTreeChangeLi
         ReadWriteTransaction rwTx = dataBroker.newReadWriteTransaction();
         InstanceIdentifier<Food> id = InstanceIdentifier.builder(ZooFoods.class).child(Food.class, new FoodKey(input.getName())).build();
         CheckedFuture<Optional<Food>, ReadFailedException> checkedFuture = rwTx.read(LogicalDatastoreType.CONFIGURATION,id);
-
         try {
             Optional<Food> optional = checkedFuture.checkedGet();
             Food food = null;
@@ -76,25 +76,38 @@ public class ZooFeedSystemImpl implements ZooFeedsystemService, DataTreeChangeLi
             try {
                 rwTx.submit().checkedGet();
                 rpcResultBuilder = RpcResultBuilder.success();
+                ReadWriteTransaction rwTx1 = dataBroker.newReadWriteTransaction();
+                InstanceIdentifier<ZooFoods> foodId = InstanceIdentifier.builder(ZooFoods.class).build();
+                CheckedFuture<Optional<ZooFoods>, ReadFailedException> checkedFuture1 = rwTx1.read(LogicalDatastoreType.CONFIGURATION, foodId);
                 try {
-                    checkAndPublishAddFoodNotification();
-                }catch (InterruptedException e){
-                    LOG.error("Failed to notify about food adding");
+                    Optional<ZooFoods> op = checkedFuture1.checkedGet();
+                    if (op.isPresent()){
+                        List<Food> foods = op.get().getFood();
+                        Long foodNum = 0L;
+                        for(Food f:foods)
+                            foodNum += f.getNum();
+                        try {
+                            checkAndPublishAddFoodNotification(foodNum);
+                        }catch (InterruptedException e){
+                            LOG.error("Failed to notify about food adding",e);
+                        }
+                    }
+                }catch (ReadFailedException e){
+                    LOG.error("Failed to get number of food",e);
                 }
             }catch (TransactionCommitFailedException e){
-                LOG.error("Failed to merge food");
+                LOG.error("Failed to merge food",e);
             }
         }catch (ReadFailedException e){
-            LOG.error("Failed to fetch food");
+            LOG.error("Failed to fetch food",e);
         }
-
-
         return Futures.immediateFuture(rpcResultBuilder.build());
     }
 
-    private void checkAndPublishAddFoodNotification() throws InterruptedException{
-        FoodStats foodStats = new FoodStatsBuilder().setAmountOfFood(1000L).build();
+    private void checkAndPublishAddFoodNotification(Long foodnum) throws InterruptedException{
+        FoodStats foodStats = new FoodStatsBuilder().setAmountOfFood(foodnum).build();
         notificationPublishService.putNotification(foodStats);
+        LOG.info("Publish notification of add food "+ foodnum);
     }
 
     @Override
@@ -102,6 +115,8 @@ public class ZooFeedSystemImpl implements ZooFeedsystemService, DataTreeChangeLi
         for(DataTreeModification<ZooTickets> change :changes){
             ZooTickets dataAfter =change.getRootNode().getDataAfter();
             ZooTickets dataBefore = change.getRootNode().getDataBefore();
+            if(dataAfter == null || dataBefore == null)
+                return;
             if(dataAfter.getNum()<dataBefore.getNum() && dataBefore.getNum()-dataAfter.getNum()>5){
                 AddFoodInput addFoodInput = new AddFoodInputBuilder().setName("fish").setNum(dataBefore.getNum()-dataAfter.getNum()).build();
                 LOG.info("Add food for data change on tickets");

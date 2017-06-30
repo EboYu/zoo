@@ -16,6 +16,8 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
                odl:type="default" />
     <reference id="rpc"
                interface="org.opendaylight.controller.sal.binding.api.RpcProviderRegistry"/>
+    <reference id="notificationService"
+               interface="org.opendaylight.controller.md.sal.binding.api.NotificationService"/>
 
     <odl:rpc-service id="animalService"
                      interface="org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.ZooAnimalService"/>
@@ -23,11 +25,20 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <odl:rpc-service id="managerService"
                      interface="org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.ZooManagerService"/>
 
+
+    <bean id="managerHandler" class="com.whu.odl.zoo.zootourist.ManagerListenerHandler">
+        <argument ref="dataBroker"/>
+    </bean>
+
+    <odl:notification-listener ref="managerHandler" />
+
+
     <bean id="provider"
           class="com.whu.odl.zoo.zootourist.ZooTouristProvider"
           init-method="init" destroy-method="close" >
         <argument ref="dataBroker"/>
         <argument ref="rpc"/>
+        <argument ref="notificationService"/>
         <argument ref="managerService" />
         <argument ref="animalService"/>
     </bean>

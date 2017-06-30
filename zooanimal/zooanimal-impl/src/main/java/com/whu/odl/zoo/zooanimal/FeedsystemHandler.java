@@ -32,22 +32,21 @@ import javax.inject.Singleton;
  * Created by ebo on 17-5-8
  * Description: 
  */
-@Singleton
 public class FeedsystemHandler implements ZooFeedsystemListener {
     private final Logger LOG = LoggerFactory.getLogger(FeedsystemHandler.class);
 
     private final DataBroker dataBroker;
 
-    @Inject
     public FeedsystemHandler(DataBroker dataBroker) {
         this.dataBroker = dataBroker;
     }
 
     @Override
     public void onFoodStats(FoodStats notification) {
+        LOG.info("Get notification of food changes "+ notification.getAmountOfFood());
         if(notification.getAmountOfFood()>4){
             try{
-                Thread.sleep(4*3000);
+                Thread.sleep(4*ManagerHandler.rate);
             }catch (Exception e){
                 LOG.error("failed to sleep");
             }
@@ -66,6 +65,7 @@ public class FeedsystemHandler implements ZooFeedsystemListener {
                             writeTx.put(LogicalDatastoreType.CONFIGURATION,identifier,food1);
                             try {
                                 writeTx.submit().checkedGet();
+                                LOG.info("Eat 4 food");
                                 break;
                             }catch (TransactionCommitFailedException e){
                                 LOG.error("Failed to eat food");

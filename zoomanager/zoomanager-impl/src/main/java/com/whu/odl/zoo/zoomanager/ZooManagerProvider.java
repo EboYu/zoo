@@ -10,6 +10,7 @@ package com.whu.odl.zoo.zoomanager;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.DataTreeChangeListener;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
@@ -56,7 +57,6 @@ public class ZooManagerProvider {
     /**
      * Method called when the blueprint container is created.
      */
-    @PostConstruct
     public void init() {
         ZooManagerImpl zooManager = new ZooManagerImpl(dataBroker,notificationPublishService,zooFeedsystemService,zooAnimalService);
         rpcRegistration = rpcRegistry.addRpcImplementation(ZooManagerService.class,zooManager);
@@ -67,7 +67,6 @@ public class ZooManagerProvider {
     /**
      * Method called when the blueprint container is destroyed.
      */
-    @PreDestroy
     public void close() {
         listenerRegistration.close();
         rpcRegistration.close();
