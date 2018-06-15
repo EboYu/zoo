@@ -17,10 +17,10 @@
     <packaging>pom</packaging>
 
     <properties>
-        <controller.mdsal.version>1.6.0-SNAPSHOT</controller.mdsal.version>
-        <genius.version>0.3.0-SNAPSHOT</genius.version>
-        <mdsal.model.version>0.11.0-SNAPSHOT</mdsal.model.version>
-        <yangtools.version>1.2.0-SNAPSHOT</yangtools.version>
+        <controller.mdsal.version>1.6.0</controller.mdsal.version>
+        <genius.version>0.3.0</genius.version>
+        <mdsal.model.version>0.11.0</mdsal.model.version>
+        <yangtools.version>1.2.0</yangtools.version>
     </properties>
 
     <build>

@@ -18,8 +18,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <controller.mdsal.version>1.6.0-SNAPSHOT</controller.mdsal.version>
-        <infrautils.version>1.2.0-SNAPSHOT</infrautils.version>
+        <controller.mdsal.version>1.6.0</controller.mdsal.version>
+        <infrautils.version>1.2.0</infrautils.version>
     </properties>
 
     <dependencies>
