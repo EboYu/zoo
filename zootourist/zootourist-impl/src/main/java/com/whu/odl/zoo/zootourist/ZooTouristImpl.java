@@ -21,10 +21,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.anim
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.animal.rev170508.ZooAnimalService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.ZooFoods;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.feedsystem.rev170508.zoo.foods.Food;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.BuyTicketInputBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.BuyTicketOutput;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.ZooManagerService;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.ZooTickets;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.manager.rev170508.*;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.tourist.rev170508.AddTouristInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.tourist.rev170508.ZooTouristService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.zoo.tourist.rev170508.ZooTourists;
@@ -115,23 +112,38 @@ public class ZooTouristImpl implements ZooTouristService,DataTreeChangeListener<
         }
     }
     private void executeBugTicket(String teamName, Long num) {
-        final BuyTicketInputBuilder builder = new BuyTicketInputBuilder();
-        builder.setName(teamName).setNum(num);
-        final Future<RpcResult<BuyTicketOutput>> rpcResultFuture = managerService.buyTicket(builder.build());
+        ReadOnlyTransaction rdTx = dataBroker.newReadOnlyTransaction();
+        InstanceIdentifier<ZooGateway> gwID = InstanceIdentifier.builder(ZooGateway.class).build();
+        CheckedFuture<Optional<ZooGateway>, ReadFailedException> checkedFuture = rdTx.read(LogicalDatastoreType.CONFIGURATION,gwID);
         try {
-            if (rpcResultFuture.get().isSuccessful()) {
-                InstanceIdentifier<ZooTourists> ids = InstanceIdentifier.builder(ZooTourists.class).build();
-                WriteTransaction writeTx = dataBroker.newWriteOnlyTransaction();
-                writeTx.delete(LogicalDatastoreType.CONFIGURATION, ids);
-                try {
-                    writeTx.submit().checkedGet();
-                }catch (TransactionCommitFailedException e)
-                {
-                    LOG.error("Failed to delete tourists");
+            Optional<ZooGateway> optional = checkedFuture.checkedGet();
+            if(optional.isPresent()){
+                boolean state = optional.get().isState();
+                if(state){
+                    final BuyTicketInputBuilder builder = new BuyTicketInputBuilder();
+                    builder.setName(teamName).setNum(num);
+                    final Future<RpcResult<BuyTicketOutput>> rpcResultFuture = managerService.buyTicket(builder.build());
+                    try {
+                        if (rpcResultFuture.get().isSuccessful()) {
+                            InstanceIdentifier<ZooTourists> ids = InstanceIdentifier.builder(ZooTourists.class).build();
+                            WriteTransaction writeTx = dataBroker.newWriteOnlyTransaction();
+                            writeTx.delete(LogicalDatastoreType.CONFIGURATION, ids);
+                            try {
+                                writeTx.submit().checkedGet();
+                            }catch (TransactionCommitFailedException e)
+                            {
+                                LOG.error("Failed to delete tourists");
+                            }
+                        }
+                    } catch (InterruptedException | ExecutionException e) {
+                        LOG.error("Failed to bug tickets");
+                    }
+                }else {
+                    LOG.error("Gate is close. Failed to bug tickets!");
                 }
             }
-        } catch (InterruptedException | ExecutionException e) {
-            LOG.error("Failed to bug tickets");
+        }catch (ReadFailedException e){
+            LOG.error("Failed to read the status of gate way");
         }
     }
 
@@ -155,19 +167,30 @@ public class ZooTouristImpl implements ZooTouristService,DataTreeChangeListener<
         for(DataTreeModification<ZooFoods> change :changes){
             ZooFoods dataAfter =change.getRootNode().getDataAfter();
             ZooFoods dataBefore = change.getRootNode().getDataBefore();
-            if(dataAfter == null || dataBefore==null)
+            if(dataAfter == null)
                 return;
 
             Long foodNum = 0L;
             for(Food food:dataAfter.getFood()){
-                    foodNum+=food.getNum();
+                foodNum+=food.getNum();
             }
-            if(foodNum<8){
-                LOG.info("Set the flag of adding tourist to false due to the number of food is smaller than 8");
-                addTouristAllowable = false;
+            ZooGatewayBuilder builder = new ZooGatewayBuilder();
+            WriteTransaction writeTransaction = dataBroker.newWriteOnlyTransaction();
+            InstanceIdentifier<ZooGateway> id = InstanceIdentifier.create(ZooGateway.class);
+
+            if(foodNum<30){
+                LOG.info("Close the gate becasue the number of food is smaller than 8");
+                builder.setState(false);
             }else {
-                LOG.info("Set the flag of adding tourist to true due to the number of food is bigger than 8");
-                addTouristAllowable = true;
+                LOG.info("Open the gate becasue the number of food is bigger than 8");
+                builder.setState(true);
+            }
+            writeTransaction.merge(LogicalDatastoreType.CONFIGURATION,id,builder.build());
+            try{
+                writeTransaction.submit().checkedGet();
+                LOG.info("Update the status of gate");
+            }catch (TransactionCommitFailedException e){
+                e.printStackTrace();
             }
         }
     }

@@ -65,10 +65,12 @@ public class ZooAnimalImpl implements ZooAnimalService{
             if (optional.isPresent()) {
                 if(input.getNum()+optional.get().getNum()<=200){
                     animal = new AnimalBuilder().setId(input.getName()).setName(input.getName()).setNum(input.getNum()+optional.get().getNum()).build();
+                }else {
+                    LOG.error("Failed to make animal");
                 }
             }else {
                 if(input.getNum()<=200)
-                animal = new AnimalBuilder().setId(input.getName()).setName(input.getName()).setNum(input.getNum()).build();
+                    animal = new AnimalBuilder().setId(input.getName()).setName(input.getName()).setNum(input.getNum()).build();
             }
             if(animal!=null){
                 rwTx.put(LogicalDatastoreType.CONFIGURATION, id,animal);
@@ -76,7 +78,7 @@ public class ZooAnimalImpl implements ZooAnimalService{
                     rwTx.submit().checkedGet();
                     rpcResultBuilder = RpcResultBuilder.success();
                 }catch (TransactionCommitFailedException e){
-                    LOG.error("Failed to merge animal");
+                    LOG.error("Failed to merge animal",e);
                 }
             }
         }catch (ReadFailedException e){

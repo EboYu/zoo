@@ -13,6 +13,13 @@ module zoo-manager {
             }
         }
 
+    container zoo-gateway{
+                leaf state {
+                    type boolean;
+                    default "false";
+                }
+            }
+
     rpc put-tickets{
         input {
             leaf num {

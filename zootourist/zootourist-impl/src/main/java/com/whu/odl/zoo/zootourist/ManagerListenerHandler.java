@@ -55,6 +55,8 @@ public class ManagerListenerHandler implements ZooManagerListener {
             }catch (TransactionCommitFailedException e){
                 LOG.error("Failed to add tourist", e);
             }
+        }else {
+            throw new RuntimeException("Error in Adding tourist");
         }
 
     }

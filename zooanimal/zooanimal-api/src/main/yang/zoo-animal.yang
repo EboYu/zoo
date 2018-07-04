@@ -21,7 +21,11 @@ module zoo-animal {
                 }
             }
         }
-
+    container zoo-eating-rate{
+            leaf rate {
+                type uint32;
+            }
+        }
 
     rpc make-animal{
         input {

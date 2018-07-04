@@ -61,9 +61,9 @@ public class ZooFeedSystemImpl implements ZooFeedsystemService, DataTreeChangeLi
     public Future<RpcResult<Void>> addFood(AddFoodInput input) {
         RpcResultBuilder<Void> rpcResultBuilder = null;
         rpcResultBuilder = RpcResultBuilder.failed();
-        ReadWriteTransaction rwTx = dataBroker.newReadWriteTransaction();
+        ReadOnlyTransaction rdTx = dataBroker.newReadOnlyTransaction();
         InstanceIdentifier<Food> id = InstanceIdentifier.builder(ZooFoods.class).child(Food.class, new FoodKey(input.getName())).build();
-        CheckedFuture<Optional<Food>, ReadFailedException> checkedFuture = rwTx.read(LogicalDatastoreType.CONFIGURATION,id);
+        CheckedFuture<Optional<Food>, ReadFailedException> checkedFuture = rdTx.read(LogicalDatastoreType.CONFIGURATION,id);
         try {
             Optional<Food> optional = checkedFuture.checkedGet();
             Food food = null;
@@ -72,13 +72,14 @@ public class ZooFeedSystemImpl implements ZooFeedsystemService, DataTreeChangeLi
             }else {
                 food = new FoodBuilder().setId(input.getName()).setName(input.getName()).setNum(input.getNum()).build();
             }
-            rwTx.put(LogicalDatastoreType.CONFIGURATION, id,food);
+            WriteTransaction wrTx = dataBroker.newWriteOnlyTransaction();
+            wrTx.put(LogicalDatastoreType.CONFIGURATION, id,food);
             try {
-                rwTx.submit().checkedGet();
+                wrTx.submit().checkedGet();
                 rpcResultBuilder = RpcResultBuilder.success();
-                ReadWriteTransaction rwTx1 = dataBroker.newReadWriteTransaction();
+                ReadOnlyTransaction rdTx1 = dataBroker.newReadOnlyTransaction();
                 InstanceIdentifier<ZooFoods> foodId = InstanceIdentifier.builder(ZooFoods.class).build();
-                CheckedFuture<Optional<ZooFoods>, ReadFailedException> checkedFuture1 = rwTx1.read(LogicalDatastoreType.CONFIGURATION, foodId);
+                CheckedFuture<Optional<ZooFoods>, ReadFailedException> checkedFuture1 = rdTx1.read(LogicalDatastoreType.CONFIGURATION, foodId);
                 try {
                     Optional<ZooFoods> op = checkedFuture1.checkedGet();
                     if (op.isPresent()){

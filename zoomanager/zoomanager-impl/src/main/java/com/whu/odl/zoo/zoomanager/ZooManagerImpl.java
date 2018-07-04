@@ -160,7 +160,13 @@ public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener
     @Override
     public Future<RpcResult<Void>> manageZoo(ManageZooInput input) {
         RpcResultBuilder<Void> rpcResultBuilder = null;
-        rpcResultBuilder = RpcResultBuilder.failed();
+        rpcResultBuilder = RpcResultBuilder.success();
+        long animalNum=0, foodNums = 0;
+        boolean animalFlag = false, foodFlag= false;
+        if(executeMakeAnimal("Panda",input.getAnimalNum(),"make "+input.getAnimalNum()+" pandas")){
+            LOG.info("make Animal");
+            animalFlag=true;
+        }
 
         final Future<RpcResult<GetNumOfAnimalOutput>> rpcResultFuture = zooAnimalService.getNumOfAnimal();
         try {
@@ -168,17 +174,7 @@ public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener
                 LOG.info("success to get number of animals");
                 GetNumOfAnimalOutput output = rpcResultFuture.get().getResult();
                 if(output!=null){
-                    if(output.getNum()+input.getAnimalNum()<=200){
-                        if(executeMakeAnimal("cat",input.getAnimalNum(),"make "+input.getAnimalNum()+" cats")){
-                            LOG.info("make Animal");
-                        }
-                    }
-                }else {
-                    if(input.getAnimalNum()<=200){
-                        if(executeMakeAnimal("cat",input.getAnimalNum(),"make "+input.getAnimalNum()+" cats")){
-                            LOG.info("make Animal");
-                        }
-                    }
+                    animalNum = output.getNum();
                 }
             }
         } catch (InterruptedException | ExecutionException e) {
@@ -197,15 +193,19 @@ public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener
                     foodNum += f.getNum();
                 if(input.getFoodNum()+foodNum<=400)
                 {
+                    foodNums=foodNum+input.getFoodNum();
                     if(executeAddFood("apple",input.getFoodNum())){
                         LOG.info("add food");
+                        foodFlag=true;
                     }
                 }
             }else{
                 if(input.getFoodNum()<=400)
                 {
+                    foodNums=input.getFoodNum();
                     if(executeAddFood("apple",input.getFoodNum())){
                         LOG.info("add food");
+                        foodFlag=true;
                     }
                 }
             }
@@ -214,6 +214,28 @@ public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener
             LOG.error("Failed to get number of food",e);
         }
 
+        if(animalFlag && foodFlag){
+            WriteTransaction writeTransaction = dataBroker.newWriteOnlyTransaction();
+            InstanceIdentifier<ZooGateway> gwID = InstanceIdentifier.create(ZooGateway.class);
+            ZooGatewayBuilder builder = new ZooGatewayBuilder();
+
+            if(animalNum>25 && foodNums>50){
+                builder.setState(true);
+                LOG.info("Open the gateway");
+            }else {
+                builder.setState(false);
+                LOG.info("Close the gateway");
+            }
+
+            writeTransaction.merge(LogicalDatastoreType.CONFIGURATION,gwID,builder.build());
+            try {
+                writeTransaction.submit().checkedGet();
+                rpcResultBuilder = RpcResultBuilder.success();
+            }catch (TransactionCommitFailedException e){
+                LOG.error("Failed to operate on the gateway",e);
+                rpcResultBuilder = RpcResultBuilder.failed();
+            }
+        }
         return Futures.immediateFuture(rpcResultBuilder.build());
     }
 
