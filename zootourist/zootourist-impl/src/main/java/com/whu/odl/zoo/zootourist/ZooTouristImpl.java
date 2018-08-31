@@ -74,6 +74,7 @@ public class ZooTouristImpl implements ZooTouristService,DataTreeChangeListener<
     public Future<RpcResult<Void>> addTourist(AddTouristInput input) {
 
         RpcResultBuilder<Void> rpcResultBuilder = null;
+
         WriteTransaction writeTx = dataBroker.newWriteOnlyTransaction();
         InstanceIdentifier<Tourist> id = InstanceIdentifier.builder(ZooTourists.class).child(Tourist.class, new TouristKey(input.getTouristId())).build();
         TouristBuilder touristBuilder = new TouristBuilder();
@@ -88,8 +89,16 @@ public class ZooTouristImpl implements ZooTouristService,DataTreeChangeListener<
             LOG.error("Add tourist Failed with id : "+input.getTouristId(), e);
             rpcResultBuilder = RpcResultBuilder.failed();
         }
-        checkNumOfTourists();
+        checkTouristID(Integer.valueOf(input.getTouristId()));
         return Futures.immediateFuture(rpcResultBuilder.build());
+    }
+
+    private void checkTouristID(int touristID) {
+        if (touristID<=999){
+            checkNumOfTourists();
+        }else{
+            LOG.error("Illigle touristID "+touristID);
+        }
     }
 
     private void checkNumOfTourists(){
@@ -103,8 +112,10 @@ public class ZooTouristImpl implements ZooTouristService,DataTreeChangeListener<
                 List<Tourist> tourists =optional.get().getTourist();
                 int touristnum = tourists.size();
                 Long animalNum = executeGetNumOfAnimal();
-                if(touristnum>10 && animalNum>4){
+                if(touristnum<=10 && animalNum>=5){
                     executeBugTicket("a Team",(long)touristnum);
+                }else{
+                    LOG.error("too much tourists or too few animals");
                 }
             }
         }catch (ReadFailedException e){
