@@ -48,9 +48,9 @@ public class ManagerHandler implements ZooManagerListener {
                 Optional<ZooEatingRate> optional =checkedFuture.checkedGet();
                 ZooEatingRateBuilder builder = new ZooEatingRateBuilder();
                 if(optional.isPresent()){
-                    builder.setRate(optional.get().getRate()+4);
+                    builder.setRate(optional.get().getRate()+notification.getAmountOfTourists());
                 }else {
-                    builder.setRate(3000L);
+                    builder.setRate(300L);
                 }
                 readWriteTransaction.put(LogicalDatastoreType.CONFIGURATION,id,builder.build());
                 try {
@@ -62,8 +62,6 @@ public class ManagerHandler implements ZooManagerListener {
             }catch (ReadFailedException e){
                 LOG.error("Failed to get Eating rate");
             }
-        }else {
-            throw new RuntimeException("Error in add tourists");
         }
     }
 }

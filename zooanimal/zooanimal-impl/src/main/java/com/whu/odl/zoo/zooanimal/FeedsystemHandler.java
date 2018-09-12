@@ -52,8 +52,14 @@ public class FeedsystemHandler implements ZooFeedsystemListener {
             try {
                 Optional<ZooEatingRate> optionalRate =future.checkedGet();
                 Long sleepTime = 300L;
+
                 if(optionalRate.isPresent()){
-                    sleepTime=optionalRate.get().getRate();
+                    if(optionalRate.get().getRate()>400){
+                        LOG.error("Can not sleep the feed system");
+                        return;
+                    }
+                    else
+                        sleepTime=optionalRate.get().getRate();
                 }
                 try{
                     Thread.sleep(sleepTime);
