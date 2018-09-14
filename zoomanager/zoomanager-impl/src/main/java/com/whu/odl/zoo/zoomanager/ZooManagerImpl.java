@@ -277,6 +277,7 @@ public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener
 
     @Override
     public void onDataTreeChanged(@Nonnull Collection<DataTreeModification<ZooFoods>> changes) {
+        /*
         for(DataTreeModification<ZooFoods> change :changes){
             ZooFoods dataAfter =change.getRootNode().getDataAfter();
             ZooFoods dataBefore = change.getRootNode().getDataBefore();
@@ -292,5 +293,6 @@ public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener
                 }
             }
         }
+        */
     }
 }

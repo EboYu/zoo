@@ -39,6 +39,7 @@ public class ManagerListenerHandler implements ZooManagerListener {
     }
     @Override
     public void onAddTourists(AddTourists notification) {
+        /*
         LOG.info("Get notification of addtourist "+ notification.getAmountOfTourists());
         if(notification.getAmountOfTourists()>=8){
             WriteTransaction writeTx = dataBroker.newWriteOnlyTransaction();
@@ -58,7 +59,7 @@ public class ManagerListenerHandler implements ZooManagerListener {
         }else {
             throw new RuntimeException("Error in Adding tourist");
         }
-
+        */
     }
 
 }

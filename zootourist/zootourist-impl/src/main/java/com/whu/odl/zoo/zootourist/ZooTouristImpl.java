@@ -89,7 +89,7 @@ public class ZooTouristImpl implements ZooTouristService,DataTreeChangeListener<
             LOG.error("Add tourist Failed with id : "+input.getTouristId(), e);
             rpcResultBuilder = RpcResultBuilder.failed();
         }
-        checkTouristID(Integer.valueOf(input.getTouristId()));
+        checkNumOfTourists();
         return Futures.immediateFuture(rpcResultBuilder.build());
     }
 
@@ -175,6 +175,7 @@ public class ZooTouristImpl implements ZooTouristService,DataTreeChangeListener<
 
     @Override
     public void onDataTreeChanged(@Nonnull Collection<DataTreeModification<ZooFoods>> changes) {
+        /*
         for(DataTreeModification<ZooFoods> change :changes){
             ZooFoods dataAfter =change.getRootNode().getDataAfter();
             ZooFoods dataBefore = change.getRootNode().getDataBefore();
@@ -204,5 +205,6 @@ public class ZooTouristImpl implements ZooTouristService,DataTreeChangeListener<
                 e.printStackTrace();
             }
         }
+        */
     }
 }
