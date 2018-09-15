@@ -50,7 +50,8 @@ public class FeedsystemHandler implements ZooFeedsystemListener {
                 //Long sleepTime = 300L;
 
                 if (optionalRate.isPresent()) {
-                    if (optionalRate.get().getRate() > 400) {
+                    Long eatingRrate = optionalRate.get().getRate();
+                    if (eatingRrate > 400) {
                         LOG.error("Can not sleep the feed system");
                     } else {
                         ReadOnlyTransaction readTx = dataBroker.newReadOnlyTransaction();

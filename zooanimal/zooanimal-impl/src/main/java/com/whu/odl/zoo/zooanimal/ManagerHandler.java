@@ -49,8 +49,6 @@ public class ManagerHandler implements ZooManagerListener {
                 ZooEatingRateBuilder builder = new ZooEatingRateBuilder();
                 if(optional.isPresent()){
                     builder.setRate(optional.get().getRate()+notification.getAmountOfTourists());
-                }else {
-                    builder.setRate(300L);
                 }
                 readWriteTransaction.put(LogicalDatastoreType.CONFIGURATION,id,builder.build());
                 try {
