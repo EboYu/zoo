@@ -49,14 +49,15 @@ public class ManagerHandler implements ZooManagerListener {
                 ZooEatingRateBuilder builder = new ZooEatingRateBuilder();
                 if(optional.isPresent()){
                     builder.setRate(optional.get().getRate()+notification.getAmountOfTourists());
+                    readWriteTransaction.put(LogicalDatastoreType.CONFIGURATION,id,builder.build());
+                    try {
+                        readWriteTransaction.submit().checkedGet();
+                        LOG.info("Increase rate of food eating");
+                    }catch (TransactionCommitFailedException e){
+                        LOG.error("Failed to get number of food",e);
+                    }
                 }
-                readWriteTransaction.put(LogicalDatastoreType.CONFIGURATION,id,builder.build());
-                try {
-                    readWriteTransaction.submit().checkedGet();
-                    LOG.info("Increase rate of food eating");
-                }catch (TransactionCommitFailedException e){
-                    LOG.error("Failed to get number of food",e);
-                }
+
             }catch (ReadFailedException e){
                 LOG.error("Failed to get Eating rate");
             }
