@@ -109,7 +109,7 @@ public class ZooTouristImpl implements ZooTouristService, DataTreeChangeListener
                 int touristnum = tourists.size();
                 Long animalNum = executeGetNumOfAnimal();
                 if (touristnum <= 10 && animalNum >= 5) {
-                    executeBugTicket("a Team", (long) touristnum);
+                    executeBugTicket("a Team", (long) 1);
                     return true;
                 } else {
                     LOG.error("too much tourists or too few animals");
@@ -173,7 +173,7 @@ public class ZooTouristImpl implements ZooTouristService, DataTreeChangeListener
 
     @Override
     public void onDataTreeChanged(@Nonnull Collection<DataTreeModification<ZooFoods>> changes) {
-
+    /*
 
         for (DataTreeModification<ZooFoods> change : changes) {
 
@@ -205,6 +205,6 @@ public class ZooTouristImpl implements ZooTouristService, DataTreeChangeListener
                 e.printStackTrace();
             }
         }
-
+        */
     }
 }
