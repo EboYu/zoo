@@ -42,7 +42,7 @@ public class ZooManagerProvider {
     private final ZooFeedsystemService zooFeedsystemService;
     private final ZooAnimalService zooAnimalService;
     private BindingAwareBroker.RpcRegistration<ZooManagerService> rpcRegistration;
-    private ListenerRegistration<ZooManagerImpl> listenerRegistration = null;
+    //private ListenerRegistration<ZooManagerImpl> listenerRegistration = null;
 
     public ZooManagerProvider(DataBroker dataBroker, RpcProviderRegistry rpcRegistry,
                           NotificationPublishService notificationPublishService,
@@ -60,7 +60,7 @@ public class ZooManagerProvider {
     public void init() {
         ZooManagerImpl zooManager = new ZooManagerImpl(dataBroker,notificationPublishService,zooFeedsystemService,zooAnimalService);
         rpcRegistration = rpcRegistry.addRpcImplementation(ZooManagerService.class,zooManager);
-        listenerRegistration = zooManager.register(dataBroker);
+        //listenerRegistration = zooManager.register(dataBroker);
         LOG.info("ZooManagerProvider Session Initiated");
     }
 
@@ -68,7 +68,7 @@ public class ZooManagerProvider {
      * Method called when the blueprint container is destroyed.
      */
     public void close() {
-        listenerRegistration.close();
+        //listenerRegistration.close();
         rpcRegistration.close();
         LOG.info("ZooManagerProvider Closed");
     }

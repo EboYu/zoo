@@ -42,7 +42,7 @@ import java.util.concurrent.Future;
  * Created by ebo on 17-5-8
  * Description: tourist implementation
  */
-public class ZooTouristImpl implements ZooTouristService, DataTreeChangeListener<ZooFoods> {
+public class ZooTouristImpl implements ZooTouristService{//, DataTreeChangeListener<ZooFoods> {
     private static final Logger LOG = LoggerFactory.getLogger(ZooTouristImpl.class);
 
     private final DataBroker dataBroker;
@@ -59,9 +59,9 @@ public class ZooTouristImpl implements ZooTouristService, DataTreeChangeListener
     }
 
 
-    public ListenerRegistration<ZooTouristImpl> register(DataBroker dataBroker) {
-        return dataBroker.registerDataTreeChangeListener(new DataTreeIdentifier<ZooFoods>(LogicalDatastoreType.CONFIGURATION, identifier), this);
-    }
+//    public ListenerRegistration<ZooTouristImpl> register(DataBroker dataBroker) {
+//        return dataBroker.registerDataTreeChangeListener(new DataTreeIdentifier<ZooFoods>(LogicalDatastoreType.CONFIGURATION, identifier), this);
+//    }
 
     @Override
     public Future<RpcResult<Void>> addTourist(AddTouristInput input) {
@@ -171,40 +171,40 @@ public class ZooTouristImpl implements ZooTouristService, DataTreeChangeListener
         return 0L;
     }
 
-    @Override
-    public void onDataTreeChanged(@Nonnull Collection<DataTreeModification<ZooFoods>> changes) {
-    /*
-
-        for (DataTreeModification<ZooFoods> change : changes) {
-
-            ZooFoods dataAfter = change.getRootNode().getDataAfter();
-            ZooFoods dataBefore = change.getRootNode().getDataBefore();
-            if (dataAfter == null)
-                return;
-
-            Long foodNum = 0L;
-            for (Food food : dataAfter.getFood()) {
-                foodNum += food.getNum();
-            }
-            ZooGatewayBuilder builder = new ZooGatewayBuilder();
-            WriteTransaction writeTransaction = dataBroker.newWriteOnlyTransaction();
-            InstanceIdentifier<ZooGateway> id = InstanceIdentifier.create(ZooGateway.class);
-
-            if (foodNum < 30) {
-                LOG.info("Close the gate becasue the number of food is smaller than 8");
-                builder.setState(false);
-            } else {
-                LOG.info("Open the gate becasue the number of food is bigger than 8");
-                builder.setState(true);
-            }
-            writeTransaction.merge(LogicalDatastoreType.CONFIGURATION, id, builder.build());
-            try {
-                writeTransaction.submit().checkedGet();
-                LOG.info("Update the status of gate");
-            } catch (TransactionCommitFailedException e) {
-                e.printStackTrace();
-            }
-        }
-        */
-    }
+//    @Override
+//    public void onDataTreeChanged(@Nonnull Collection<DataTreeModification<ZooFoods>> changes) {
+//    /*
+//
+//        for (DataTreeModification<ZooFoods> change : changes) {
+//
+//            ZooFoods dataAfter = change.getRootNode().getDataAfter();
+//            ZooFoods dataBefore = change.getRootNode().getDataBefore();
+//            if (dataAfter == null)
+//                return;
+//
+//            Long foodNum = 0L;
+//            for (Food food : dataAfter.getFood()) {
+//                foodNum += food.getNum();
+//            }
+//            ZooGatewayBuilder builder = new ZooGatewayBuilder();
+//            WriteTransaction writeTransaction = dataBroker.newWriteOnlyTransaction();
+//            InstanceIdentifier<ZooGateway> id = InstanceIdentifier.create(ZooGateway.class);
+//
+//            if (foodNum < 30) {
+//                LOG.info("Close the gate becasue the number of food is smaller than 8");
+//                builder.setState(false);
+//            } else {
+//                LOG.info("Open the gate becasue the number of food is bigger than 8");
+//                builder.setState(true);
+//            }
+//            writeTransaction.merge(LogicalDatastoreType.CONFIGURATION, id, builder.build());
+//            try {
+//                writeTransaction.submit().checkedGet();
+//                LOG.info("Update the status of gate");
+//            } catch (TransactionCommitFailedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        */
+//    }
 }

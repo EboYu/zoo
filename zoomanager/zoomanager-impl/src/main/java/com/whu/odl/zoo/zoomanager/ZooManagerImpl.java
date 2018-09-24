@@ -48,7 +48,7 @@ import java.util.concurrent.Future;
  * Created by ebo on 17-5-8
  * Description: manager implementation
  */
-public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener<ZooFoods> {
+public class ZooManagerImpl implements ZooManagerService{//, DataTreeChangeListener<ZooFoods> {
     private static final Logger LOG = LoggerFactory.getLogger(ZooManagerImpl.class);
 
     private final DataBroker dataBroker;
@@ -67,9 +67,9 @@ public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener
         this.zooAnimalService = zooAnimalService;
     }
 
-    public ListenerRegistration<ZooManagerImpl> register(DataBroker dataBroker){
-        return dataBroker.registerDataTreeChangeListener(new DataTreeIdentifier<ZooFoods>(LogicalDatastoreType.CONFIGURATION,identifier),this);
-    }
+//    public ListenerRegistration<ZooManagerImpl> register(DataBroker dataBroker){
+//        return dataBroker.registerDataTreeChangeListener(new DataTreeIdentifier<ZooFoods>(LogicalDatastoreType.CONFIGURATION,identifier),this);
+//    }
 
 
     @Override
@@ -275,24 +275,24 @@ public class ZooManagerImpl implements ZooManagerService, DataTreeChangeListener
         return false;
     }
 
-    @Override
-    public void onDataTreeChanged(@Nonnull Collection<DataTreeModification<ZooFoods>> changes) {
-        /*
-        for(DataTreeModification<ZooFoods> change :changes){
-            ZooFoods dataAfter =change.getRootNode().getDataAfter();
-            ZooFoods dataBefore = change.getRootNode().getDataBefore();
-            if(dataAfter == null || dataBefore==null)
-                return;
-            if(dataAfter.getFood().size() < dataBefore.getFood().size() || dataAfter.getFood().size()==1){
-                Long foodNum = 0L;
-                for(Food food:dataAfter.getFood()){
-                    foodNum+=food.getNum();
-                }
-                if(foodNum<2){
-                    executeAddFood("fish",2L);
-                }
-            }
-        }
-        */
-    }
+//    @Override
+//    public void onDataTreeChanged(@Nonnull Collection<DataTreeModification<ZooFoods>> changes) {
+//        /*
+//        for(DataTreeModification<ZooFoods> change :changes){
+//            ZooFoods dataAfter =change.getRootNode().getDataAfter();
+//            ZooFoods dataBefore = change.getRootNode().getDataBefore();
+//            if(dataAfter == null || dataBefore==null)
+//                return;
+//            if(dataAfter.getFood().size() < dataBefore.getFood().size() || dataAfter.getFood().size()==1){
+//                Long foodNum = 0L;
+//                for(Food food:dataAfter.getFood()){
+//                    foodNum+=food.getNum();
+//                }
+//                if(foodNum<2){
+//                    executeAddFood("fish",2L);
+//                }
+//            }
+//        }
+//        */
+//    }
 }

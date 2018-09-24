@@ -37,7 +37,7 @@ public class ZooTouristProvider {
     private final ZooManagerService managerService;
     private BindingAwareBroker.RpcRegistration<ZooTouristService> rpcRegistration;
     private Registration managerListenerRegisteration = null;
-    private ListenerRegistration<ZooTouristImpl> listenerRegistration = null;
+    //private ListenerRegistration<ZooTouristImpl> listenerRegistration = null;
 
     public ZooTouristProvider(final DataBroker dataBroker, RpcProviderRegistry rpcProviderRegistry,
                               NotificationService notificationService, ZooManagerService managerService,
@@ -57,7 +57,7 @@ public class ZooTouristProvider {
         //ManagerListenerHandler managerListenerHandler = new ManagerListenerHandler(dataBroker);
         //managerListenerRegisteration = notificationService.registerNotificationListener(managerListenerHandler);
         ZooTouristImpl zooTourist = new ZooTouristImpl(dataBroker,managerService,animalService);
-        listenerRegistration = zooTourist.register(dataBroker);
+        //listenerRegistration = zooTourist.register(dataBroker);
         LOG.info("ZooTouristProvider Session Initiated");
     }
 
@@ -65,8 +65,8 @@ public class ZooTouristProvider {
      * Method called when the blueprint container is destroyed.
      */
     public void close() throws Exception{
-        if(listenerRegistration!=null)
-            listenerRegistration.close();
+//        if(listenerRegistration!=null)
+//            listenerRegistration.close();
         if(rpcRegistration!=null)
             rpcRegistration.close();
         if(managerListenerRegisteration!=null)
