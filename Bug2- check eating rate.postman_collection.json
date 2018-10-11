@@ -1,0 +1,285 @@
+{
+	"info": {
+		"_postman_id": "c5c1429b-00ce-4710-a0db-f50ad57f3b80",
+		"name": "Bug2: check eating rate",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "set eating rate",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"zoo-eating-rate\": {\n        \"rate\": 300\n    }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/config/zoo-animal:zoo-eating-rate",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"config",
+						"zoo-animal:zoo-eating-rate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "putTickets",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-manager:input\": {\n    \"zoo-manager:num\": \"200\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-manager:put-tickets",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-manager:put-tickets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "buyTickets1",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-manager:input\": {\n    \"zoo-manager:num\": \"20\",\n    \"zoo-manager:name\": \"Tom\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-manager:buy-ticket",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-manager:buy-ticket"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "buyTickets2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-manager:input\": {\n    \"zoo-manager:num\": \"120\",\n    \"zoo-manager:name\": \"Jerry\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-manager:buy-ticket",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-manager:buy-ticket"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete eating rate",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/config/zoo-animal:zoo-eating-rate",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"config",
+						"zoo-animal:zoo-eating-rate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Foods",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/config/zoo-feedsystem:zoo-foods",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"config",
+						"zoo-feedsystem:zoo-foods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete Tickets",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/config/zoo-manager:zoo-tickets",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"config",
+						"zoo-manager:zoo-tickets"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,561 @@
+{
+	"info": {
+		"_postman_id": "68bd88b7-fd26-4fd8-add0-25d5e74576ba",
+		"name": "Bug1: add tourists",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "makeAnimal",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-animal:input\": {\n    \"zoo-animal:description\": \"little cats\",\n    \"zoo-animal:num\": \"10\",\n    \"zoo-animal:name\": \"Cat\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-animal:make-animal",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-animal:make-animal"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addTourists1",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-tourist:input\": {\n    \"zoo-tourist:name\": \"Ebo\",\n    \"zoo-tourist:touristId\": \"1\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-tourist:add-tourist",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-tourist:add-tourist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addTourists2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-tourist:input\": {\n    \"zoo-tourist:name\": \"Ebo\",\n    \"zoo-tourist:touristId\": \"2\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-tourist:add-tourist",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-tourist:add-tourist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addTourists3",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-tourist:input\": {\n    \"zoo-tourist:name\": \"Ebo\",\n    \"zoo-tourist:touristId\": \"3\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-tourist:add-tourist",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-tourist:add-tourist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addTourists4",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-tourist:input\": {\n    \"zoo-tourist:name\": \"Ebo\",\n    \"zoo-tourist:touristId\": \"4\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-tourist:add-tourist",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-tourist:add-tourist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addTourists5",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-tourist:input\": {\n    \"zoo-tourist:name\": \"Ebo\",\n    \"zoo-tourist:touristId\": \"5\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-tourist:add-tourist",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-tourist:add-tourist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addTourists6",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-tourist:input\": {\n    \"zoo-tourist:name\": \"Ebo\",\n    \"zoo-tourist:touristId\": \"6\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-tourist:add-tourist",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-tourist:add-tourist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addTourists7",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-tourist:input\": {\n    \"zoo-tourist:name\": \"Ebo\",\n    \"zoo-tourist:touristId\": \"7\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-tourist:add-tourist",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-tourist:add-tourist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addTourists8",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-tourist:input\": {\n    \"zoo-tourist:name\": \"Ebo\",\n    \"zoo-tourist:touristId\": \"8\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-tourist:add-tourist",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-tourist:add-tourist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addTourists9",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-tourist:input\": {\n    \"zoo-tourist:name\": \"Ebo\",\n    \"zoo-tourist:touristId\": \"9\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-tourist:add-tourist",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-tourist:add-tourist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addTourists10",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-tourist:input\": {\n    \"zoo-tourist:name\": \"Ebo\",\n    \"zoo-tourist:touristId\": \"10\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-tourist:add-tourist",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-tourist:add-tourist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addTourists11",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"zoo-tourist:input\": {\n    \"zoo-tourist:name\": \"Ebo\",\n    \"zoo-tourist:touristId\": \"11\"\n  }\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/operations/zoo-tourist:add-tourist",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"operations",
+						"zoo-tourist:add-tourist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteAnimals",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/config/zoo-animal:zoo-animals",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"config",
+						"zoo-animal:zoo-animals"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deletealltourists",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4="
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:8181/restconf/config/zoo-tourist:zoo-tourists",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8181",
+					"path": [
+						"restconf",
+						"config",
+						"zoo-tourist:zoo-tourists"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
