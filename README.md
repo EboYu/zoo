@@ -2,7 +2,7 @@
 
 ## Introduction 
 A toy program that consists of four bundles. The dependencies of these bundles is illustrated as the following graph:
-<img src="Zoo.png">
+<img src="zoo.png">
 
 A: zoo-animal
 M: zoo-manager
